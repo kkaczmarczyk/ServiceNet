@@ -84,11 +84,15 @@ const apiUrl = 'api/activities';
 
 // Actions
 
-export const getEntities = (search, page, size, sort) => {
+export const getEntities = (search, page, size, sort, filter) => {
   const requestUrl = `${apiUrl}${sort ? `?search=${search}&page=${page}&size=${size}&sort=${sort}` : ''}`;
+  // tslint:disable-next-line:no-console
+  console.log('FILTER', filter);
   return {
     type: ACTION_TYPES.FETCH_ACTIVITY_LIST,
-    payload: axios.get<IActivity>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+    payload: axios.post<IActivity>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`, {
+      filtersForActivity: filter
+    })
   };
 };
 

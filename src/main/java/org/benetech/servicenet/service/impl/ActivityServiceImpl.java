@@ -1,13 +1,16 @@
 package org.benetech.servicenet.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.OrganizationMatchService;
+import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
+import org.benetech.servicenet.service.dto.FiltersActivityDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.dto.RecordDTO;
 import org.benetech.servicenet.service.exceptions.ActivityCreationException;
@@ -45,24 +48,31 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final RecordsService recordsService;
 
+    private final OrganizationService organizationService;
+
     public ActivityServiceImpl(ActivityRepository activityRepository, ConflictService conflictService,
-                               OrganizationMatchService organizationMatchService, RecordsService recordsService) {
-        this.activityRepository = activityRepository;
-        this.conflictService = conflictService;
-        this.organizationMatchService = organizationMatchService;
-        this.recordsService = recordsService;
-    }
+                               OrganizationMatchService organizationMatchService, 
+                               RecordsService recordsService, OrganizationService organizationService) {
+    this.activityRepository = activityRepository;
+    this.organizationMatchService = organizationMatchService;
+    this.conflictService = conflictService;
+    this.recordsService = recordsService;
+    this.organizationService = organizationService;
+  }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId, String search) {
+    public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId,
+    String search, FiltersActivityDTO filtersForActivity) {
         List<ActivityDTO> activities = new ArrayList<>();
         Page<ActivityInfo> activitiesInfo = findAllActivitiesInfoWithOwnerId(systemAccountId, search, pageable);
 
         for (ActivityInfo info : activitiesInfo) {
             try {
-                Optional<ActivityDTO> activityOpt = getEntityActivity(info.getId());
-                activityOpt.ifPresent(activities::add);
+                if (doesOrganizationMatchFilter(info.getId(), filtersForActivity)) {
+                  Optional<ActivityDTO> activityOpt = getEntityActivity(info.getId());
+                  activityOpt.ifPresent(activities::add);
+                }
             } catch (ActivityCreationException ex) {
                 log.error(ex.getMessage());
             }
@@ -70,6 +80,11 @@ public class ActivityServiceImpl implements ActivityService {
 
         return new PageImpl<>(
             activities, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), activitiesInfo.getTotalElements());
+    }
+
+    private Boolean doesOrganizationMatchFilter(UUID organizationId, FiltersActivityDTO filtersForActivity) {
+      Optional<Organization> organization = organizationService.findOne(organizationId);
+      return Boolean.TRUE;
     }
 
     @Override

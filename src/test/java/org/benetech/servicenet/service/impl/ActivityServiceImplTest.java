@@ -12,6 +12,7 @@ import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.OrganizationMatchService;
+import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
@@ -72,11 +73,14 @@ public class ActivityServiceImplTest {
     @Autowired
     private RecordsService recordsService;
 
+    @Autowired
+    private OrganizationService organizationService;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
         activityService = new ActivityServiceImpl(activityRepository, conflictService, organizationMatchService,
-            recordsService);
+            recordsService, organizationService);
     }
 
     @Before
@@ -103,7 +107,7 @@ public class ActivityServiceImplTest {
     public void getAllActivities() {
         PageRequest pageRequest = PageRequest.of(0, 1);
         Page<ActivityDTO> activities = activityService.getAllOrganizationActivities(
-            pageRequest, user.getSystemAccount().getId(), null);
+            pageRequest, user.getSystemAccount().getId(), null, null);
 
         assertEquals(1, activities.getTotalElements());
         ActivityDTO actualAct = activities.stream().collect(Collectors.toList()).get(0);

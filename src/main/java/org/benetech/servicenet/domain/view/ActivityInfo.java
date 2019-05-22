@@ -44,4 +44,22 @@ public class ActivityInfo {
 
     @Column(name = "account_id")
     private UUID accountId;
+
+    @Column(name = "phy_address_city")
+    private String physicalAddressCity;
+
+    @Column(name = "phy_address_region")
+    private String physicalAddressRegion;
+
+    @Column(name = "phy_address_pc")
+    private String physicalAddressPostalCode;
+
+    @Column(name = "po_address_city")
+    private String postalAddressCity;
+
+    @Column(name = "po_address_region")
+    private String postalAddressRegion;
+
+    @Column(name = "po_address_pc")
+    private String postalAddressPostalCode;
 }

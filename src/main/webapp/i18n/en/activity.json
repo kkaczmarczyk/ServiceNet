@@ -5,6 +5,14 @@
         "title": "Activities",
         "createLabel": "Create a new Activity",
         "createOrEditLabel": "Create or edit a Activity",
+        "filter": {
+          "toggle": "Filter",
+          "city": "City",
+          "county": "County",
+          "zip": "ZIP",
+          "partner": "Partner Sources",
+          "applyFilter": "Apply"
+        },
         "sort": {
           "toggle": "Sort",
           "recommended": "Recommended",
