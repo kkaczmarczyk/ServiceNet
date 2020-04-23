@@ -24,9 +24,13 @@ jobs:
     #     repository: kkaczmarczyk/servicenet
     #     tag_with_ref: true
     #     target: mytarget
-    - id: step1
-      run: docker image ls
+    # - id: step1
+    #   run: docker image ls
     - id: step2
       run: docker tag servicenet kkaczmarczyk/servicenet:${GITHUB_REF##*/}
     - id: step3
       run: docker image ls
+    - name: Docker login
+      run: docker login docker.pkg.github.com -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+    - name: Docker push
+      run: docker push kkaczmarczyk/servicenet:${GITHUB_REF##*/}
