@@ -27,7 +27,7 @@ jobs:
     # - id: step1
     #   run: docker image ls
     - id: step2
-      run: docker tag servicenet kkaczmarczyk/servicenet:${GITHUB_REF##*/}
+      run: docker tag servicenet chkaczmarczyk/servicenet:${GITHUB_REF##*/}
     - id: step3
       run: docker image ls
     - name: Docker login
