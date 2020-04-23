@@ -16,7 +16,7 @@ jobs:
       with:
         java-version: 11
     - name: Build with Maven
-      run: ./mvnw -Pprod verify jib:dockerBuild --no-transfer-progress
+      run: ./mvnw -Pprod compile jib:dockerBuild --no-transfer-progress
     # - uses: docker/build-push-action@v1
     #   with:
     #     username: ${{ secrets.DOCKER_USERNAME }}
@@ -25,4 +25,8 @@ jobs:
     #     tag_with_ref: true
     #     target: mytarget
     - id: step1
+      run: docker image ls
+    - id: step2
+      run: docker tag servicenet kkaczmarczyk/servicenet:${GITHUB_REF##*/}
+    - id: step3
       run: docker image ls
