@@ -31,6 +31,6 @@ jobs:
     - id: step3
       run: docker image ls
     - name: Docker login
-      run: docker login docker.pkg.github.com -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} docker.io
+      run: docker login docker.pkg.github.com -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
     - name: Docker push
       run: docker push kkaczmarczyk/servicenet
