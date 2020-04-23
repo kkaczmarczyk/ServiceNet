@@ -33,4 +33,4 @@ jobs:
     - name: Docker login
       run: docker login docker.pkg.github.com -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
     - name: Docker push
-      run: docker push kkaczmarczyk/servicenet:${GITHUB_REF##*/}
+      run: docker push kkaczmarczyk/servicenet
