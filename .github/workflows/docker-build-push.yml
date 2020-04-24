@@ -5,8 +5,8 @@ on:
     branches: [ dev, master ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  docker-build:
+    runs-on: ubuntu-18.04
     steps:
     - name: Set container tag to 'dev'
       if: endsWith(github.ref, '/dev')
@@ -22,11 +22,9 @@ jobs:
       with:
         java-version: 11
     - name: Build with Google Jib
-      run: ./mvnw -Pprod verify jib:dockerBuild --no-transfer-progress
+      run: ./mvnw -Pprod compile jib:dockerBuild --no-transfer-progress
     - name: Docker tag appropriately
       run: docker tag servicenet kkaczmarczyk/servicenet:${CONTAINER_TAG}
-    - name: step3
-      run: docker image ls
     - name: Docker login
       run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}  && docker push "kkaczmarczyk/servicenet:${CONTAINER_TAG}"
     - name: Docker push
