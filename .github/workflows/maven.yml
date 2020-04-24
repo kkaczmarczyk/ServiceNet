@@ -23,9 +23,9 @@ jobs:
         java-version: 11
     - name: Build with Google Jib
       run: ./mvnw -Pprod verify jib:dockerBuild --no-transfer-progress
-    - id: Docker tag appropriately
+    - name: Docker tag appropriately
       run: docker tag servicenet kkaczmarczyk/servicenet:${CONTAINER_TAG}
-    - id: step3
+    - name: step3
       run: docker image ls
     - name: Docker login
       run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}  && docker push "kkaczmarczyk/servicenet:${CONTAINER_TAG}"
