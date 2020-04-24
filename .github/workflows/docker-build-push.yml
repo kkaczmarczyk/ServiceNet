@@ -10,12 +10,10 @@ jobs:
     steps:
     - name: Set container tag to 'dev'
       if: endsWith(github.ref, '/dev')
-      run: |
-        echo "::set-env name=CONTAINER_TAG::dev"
+      run: echo "::set-env name=CONTAINER_TAG::dev"
     - name: Set container tag to 'latest'
       if: endsWith(github.ref, '/master')
-      run: |
-        echo "::set-env name=CONTAINER_TAG::latest"
+      run: echo "::set-env name=CONTAINER_TAG::latest"
     - uses: actions/checkout@v2
     - name: Set up JDK 11
       uses: actions/setup-java@v1
