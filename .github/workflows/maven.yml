@@ -1,34 +1,33 @@
-name: Build Docker image with Jib and push to Registry
+name: Build Docker image with Jib, tag and push to Docker Hub
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ dev, master ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
+    - name: Set container tag to 'dev'
+      if: endsWith(github.ref, '/dev')
+      run: |
+        echo "::set-env name=CONTAINER_TAG::dev"
+    - name: Set container tag to 'latest'
+      if: endsWith(github.ref, '/master')
+      run: |
+        echo "::set-env name=CONTAINER_TAG::latest"
     - uses: actions/checkout@v2
     - name: Set up JDK 11
       uses: actions/setup-java@v1
       with:
         java-version: 11
-    - name: Build with Maven
-      run: ./mvnw -Pprod compile jib:dockerBuild --no-transfer-progress
-    # - uses: docker/build-push-action@v1
-    #   with:
-    #     username: ${{ secrets.DOCKER_USERNAME }}
-    #     password: ${{ secrets.DOCKER_PASSWORD }}
-    #     repository: kkaczmarczyk/servicenet
-    #     tag_with_ref: true
-    #     target: mytarget
-    # - id: step1
-    #   run: docker image ls
-    - id: step2
-      run: docker tag servicenet kkaczmarczyk/servicenet:${GITHUB_REF##*/}
+    - name: Build with Google Jib
+      run: ./mvnw -Pprod verify jib:dockerBuild --no-transfer-progress
+    - id: Docker tag appropriately
+      run: docker tag servicenet kkaczmarczyk/servicenet:${CONTAINER_TAG}
     - id: step3
       run: docker image ls
     - name: Docker login
-      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}  && docker push "kkaczmarczyk/servicenet:${GITHUB_REF##*/}"
+      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}  && docker push "kkaczmarczyk/servicenet:${CONTAINER_TAG}"
+    - name: Docker push
+      run: docker push "kkaczmarczyk/servicenet:${CONTAINER_TAG}"
