@@ -23,26 +23,26 @@ jobs:
       run: ./mvnw -Pprod package jib:dockerBuild --no-transfer-progress
     - name: Docker tag appropriately
       run: docker tag servicenet kkaczmarczyk/servicenet:${IMAGE_TAG}
-    - name: Docker tag with commit id if branch=master
+    - name: (branch=master) Docker tag with commit id
       if: endsWith(github.ref, '/master')
       run: docker tag servicenet kkaczmarczyk/servicenet:${GITHUB_SHA}
     - name: Docker login
       run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
     - name: Docker push with IMAGE_TAG
-      run: docker push "kkaczmarczyk/servicenet:${CONTAINER_TAG}"
-    - name: Docker push with GITHUB_SHA if branch=master
+      run: docker push "kkaczmarczyk/servicenet:${IMAGE_TAG}"
+    - name: (branch=master) Docker push with GITHUB_SHA
       if: endsWith(github.ref, '/master')
       run: docker push "kkaczmarczyk/servicenet:${GITHUB_SHA}"
-    - name: Get current date for a git tag snapshot if branch=master
+    - name: (branch=master) Get current date for a git tag snapshot
       if: endsWith(github.ref, '/master')
       id: date
       run: echo "::set-output name=date::release-$(date +'%Y-%m-%d')"
-    - name: Checkout branch "master" if branch=master
+    - name: (branch=master) Checkout branch "master"
       if: endsWith(github.ref, '/master')
       uses: actions/checkout@v2
       with:
         ref: 'master'
-    - name: Tag snapshot with build date if branch=master
+    - name: (branch=master) Tag snapshot with build date
       if: endsWith(github.ref, '/master')
       uses: tvdias/github-tagger@v0.0.1
       with:
