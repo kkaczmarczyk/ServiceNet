@@ -23,6 +23,24 @@ jobs:
       run: ./mvnw -Pprod package jib:dockerBuild --no-transfer-progress
     - name: Docker tag appropriately
       run: docker tag servicenet kkaczmarczyk/servicenet:${CONTAINER_TAG}
+    - name: Docker tag with commit id if branch=master
+      if: endsWith(github.ref, '/master')
+      run: docker tag servicenet kkaczmarczyk/servicenet:${GITHUB_SHA}
+    - name: Get current date for a snapshot if branch=master
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      if: endsWith(github.ref, '/master')
+    - name: Checkout branch "master" if branch=master
+      uses: actions/checkout@v2
+      with:
+        ref: 'master'
+      if: endsWith(github.ref, '/master')
+    - name: Tag snapshot if branch=master
+      uses: tvdias/github-tagger@v0.0.1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ steps.date.outputs.date }}
+      if: endsWith(github.ref, '/master')
     - name: Docker login
       run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
     - name: Docker push
