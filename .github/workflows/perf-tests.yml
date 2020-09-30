@@ -23,12 +23,11 @@ jobs:
       with:
         java-version: 11
     - name: Run performance tests
-      run: ./mvnw verify
+      run: ./mvnw verify --no-transfer-progress
     - name: Get current date for a git tag snapshot
       id: date
       run: echo "::set-output name=date::release-$(date +'%Y-%m-%d')"
-    - name: (branch=master) Checkout branch "master"
-      if: endsWith(github.ref, '/master')
-      uses: actions/checkout@v2
+    - uses: actions/upload-artifact@v2
       with:
-        ref: 'master'
+        name: perf-tests-results.csv
+        path: target/zerocode-junit-granular-report.csv
