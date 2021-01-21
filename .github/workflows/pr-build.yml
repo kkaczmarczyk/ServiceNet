@@ -27,7 +27,7 @@ jobs:
       run: ./mvnw dependency:go-offline --no-transfer-progress
 
     - name: Run backend&frontend tests
-      run: ./mvnw -Pprod clean verify --no-transfer-progress jacoco:report coveralls:report
+      run: ./mvnw -Pprod clean verify --no-transfer-progress jacoco:report coveralls:report -DrepoToken=${{ secrets.COVERALLS_TOKEN }}
 
     # - name: Post coverage - Coveralls action
     #   uses: coverallsapp/github-action@master
